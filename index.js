@@ -43,13 +43,10 @@ app.use(express.json());
 })*/
 
 app.use((req,res,next)=>{
-  let url
-  try{
-    url = req.body.url
-  }catch(e){
-    console.log('url is empty', req.body)
-    return next()
-    
+  const {url} = req.body
+  if(!url){
+    next()
+    return
   }
   if(!isUrl(url)){
     return res.json({ error: 'invalid url' })
@@ -90,10 +87,8 @@ app.post('/api/shorturl', async (req,res)=>{
 
 app.get('/api/shorturl/:urlId', async (req,res)=>{
   const {urlId} = req.params
-  console.log(urlId)
   const result = await Url.findOne({urlId})
   if(result){
-    console.log(result)
     return res.redirect(result.originUrl)
   }else res.status(404).json('Not found')
 })
