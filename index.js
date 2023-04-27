@@ -5,6 +5,7 @@ import cors from 'cors'
 import connectDB from './db.js'
 import Url from './Url.js'
 import dns from 'dns'
+import isUrl from 'is-url'
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -40,6 +41,23 @@ app.use(express.json());
   }
   next()
 })*/
+
+app.use((req,res,next)=>{
+  let url
+  try{
+    url = req.body.url
+  }catch(e){
+    console.log('url is empty', req.body)
+    return next()
+    
+  }
+  if(!isUrl(url)){
+    return res.json({ error: 'invalid url' })
+  }
+  next()
+
+})
+
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
