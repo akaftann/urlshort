@@ -19,7 +19,26 @@ app.use(cors());
 app.use('/public', express.static(`${process.cwd()}/public`));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use((req,res,next)=>{
+  console.log(`${req.method} ${req.path}`);
+  let url
+  try{
+    url = req.body.url
+  }catch(e){
+    console.log('url is empty', req.body)
+    next()
+  }
+  if(url){
+    console.log(url)
+    dns.lookup(url.replace(/^https?:\/\//,''),(err, adr, fam)=>{
+      if(err){
+        res.json({ error: 'invalid url' })
+        return
+      }
+    })
+  }
+  next()
+})
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
@@ -29,22 +48,13 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-app.post('/api/shorturl', (req,res,next)=>{
+app.post('/api/shorturl', async (req,res)=>{
   const {url} = req.body
-  dns.lookup(url,(err, adr, fam)=>{
-    if(err){
-      console.log(url)
-      res.json({ error: 'invalid url' })
-      return
-    }else{
-      next()
-    }
-  })
-}, async (req,res)=>{
-  const {url} = req.body
+  console.log(`this is post log and url: ${url}`)
   const base = process.env.BASE
   let urlNew = await Url.findOne({originUrl: url})
   if(urlNew){
+    console.log('second res.set')
     res.json({original_url: urlNew.originUrl, short_url: urlNew.urlId})
     return
   }
@@ -56,10 +66,11 @@ app.post('/api/shorturl', (req,res,next)=>{
     shortUrl: shortUrl
   })
   await urlNew.save()
+  console.log('third res.set')
   res.json({original_url: urlNew.originUrl, short_url: urlNew.urlId})
 })
 
-app.get('/api/shorturl/:urlId',async (req,res)=>{
+app.get('/api/shorturl/:urlId', async (req,res)=>{
   const {urlId} = req.params
   const result = await Url.findOne({urlId})
   if(result){
