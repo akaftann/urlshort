@@ -2,8 +2,10 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import express from 'express'
 import cors from 'cors'
-const app = express();
 import connectDB from './db.js'
+
+
+const app = express();
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -11,8 +13,8 @@ connectDB()
 app.use(cors());
 
 app.use('/public', express.static(`${process.cwd()}/public`));
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
