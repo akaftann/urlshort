@@ -29,14 +29,19 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-app.post('/api/shorturl', async (req,res)=>{
+app.post('/api/shorturl', (req,res,next)=>{
   const {url} = req.body
   dns.lookup(url,(err, adr, fam)=>{
     if(err){
+      console.log(url)
       res.json({ error: 'invalid url' })
       return
+    }else{
+      next()
     }
   })
+}, async (req,res)=>{
+  const {url} = req.body
   const base = process.env.BASE
   let urlNew = await Url.findOne({originUrl: url})
   if(urlNew){
@@ -58,7 +63,7 @@ app.get('/api/shorturl/:urlId',async (req,res)=>{
   const {urlId} = req.params
   const result = await Url.findOne({urlId})
   if(result){
-    res.redirect(result.originUrl)
+    return res.redirect(result.originUrl)
   }else res.status(404).json('Not found')
 })
 
