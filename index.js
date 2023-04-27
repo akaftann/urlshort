@@ -26,13 +26,15 @@ app.use((req,res,next)=>{
   }catch(e){
     console.log('url is empty', req.body)
     next()
+    return
   }
   if(url){
     console.log(url)
     dns.lookup(url.replace(/^https?:\/\//,''),(err, adr, fam)=>{
       if(err){
-        res.json({ error: 'invalid url' })
-        return
+        console.log('res 1')
+        return res.json({ error: 'invalid url' })
+         
       }
     })
   }
@@ -52,6 +54,7 @@ app.post('/api/shorturl', async (req,res)=>{
   const base = process.env.BASE
   let urlNew = await Url.findOne({originUrl: url})
   if(urlNew){
+    console.log('res 2')
     res.json({original_url: urlNew.originUrl, short_url: urlNew.urlId})
     return
   }
@@ -63,6 +66,7 @@ app.post('/api/shorturl', async (req,res)=>{
     shortUrl: shortUrl
   })
   await urlNew.save()
+  console.log('res 3')
   res.json({original_url: urlNew.originUrl, short_url: urlNew.urlId})
 })
 
