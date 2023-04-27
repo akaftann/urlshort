@@ -20,7 +20,6 @@ app.use('/public', express.static(`${process.cwd()}/public`));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use((req,res,next)=>{
-  console.log(`${req.method} ${req.path}`);
   let url
   try{
     url = req.body.url
@@ -50,11 +49,9 @@ app.get('/api/hello', function(req, res) {
 
 app.post('/api/shorturl', async (req,res)=>{
   const {url} = req.body
-  console.log(`this is post log and url: ${url}`)
   const base = process.env.BASE
   let urlNew = await Url.findOne({originUrl: url})
   if(urlNew){
-    console.log('second res.set')
     res.json({original_url: urlNew.originUrl, short_url: urlNew.urlId})
     return
   }
@@ -66,7 +63,6 @@ app.post('/api/shorturl', async (req,res)=>{
     shortUrl: shortUrl
   })
   await urlNew.save()
-  console.log('third res.set')
   res.json({original_url: urlNew.originUrl, short_url: urlNew.urlId})
 })
 
