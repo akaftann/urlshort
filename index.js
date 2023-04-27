@@ -11,6 +11,8 @@ connectDB()
 app.use(cors());
 
 app.use('/public', express.static(`${process.cwd()}/public`));
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
 
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
@@ -24,6 +26,7 @@ app.get('/api/hello', function(req, res) {
 app.post('/api/shorturl',(req,res)=>{
   
   console.log(req.body)
+  res.json(req.body)
 
 })
 
