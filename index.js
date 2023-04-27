@@ -22,8 +22,8 @@ app.get('/api/hello', function(req, res) {
 });
 
 app.post('/api/shorturl',(req,res)=>{
-  const {url} = req.body
-  console.log(url)
+  
+  console.log(req.body)
 
 })
 
