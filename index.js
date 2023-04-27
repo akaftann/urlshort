@@ -19,7 +19,7 @@ app.use(cors());
 app.use('/public', express.static(`${process.cwd()}/public`));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use((req,res,next)=>{
+/*app.use((req,res,next)=>{
   let url
   try{
     url = req.body.url
@@ -39,7 +39,7 @@ app.use((req,res,next)=>{
     })
   }
   next()
-})
+})*/
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
