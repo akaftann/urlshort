@@ -2,6 +2,9 @@
   "name": "shorturl",
   "version": "0.0.3",
   "description": "API project for freeCodeCamp",
+  "engines": {
+    "node": ">=14.20.1 <15"
+  },
   "type": "module",
   "main": "index.js",
   "scripts": {
